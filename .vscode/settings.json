@@ -1,0 +1,4 @@
+{
+    "appService.deploySubpath": "",
+    "appService.defaultWebAppToDeploy": "/subscriptions/58994015-5e1c-4dd9-8f24-33cf13f05bf9/resourceGroups/Atena/providers/Microsoft.Web/sites/atenaapiv1"
+}

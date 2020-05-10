@@ -1,0 +1,14 @@
+{
+    "name": "atenaapi",
+    "description": "Backend REST para a aplicação Atena ",
+    "version": "1.0.1",
+    "private": false,
+    "license": "MIT",
+    "author": "Murilo Preccaro https://github.com/Mogueno/",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "mssql": "^2.1.6"
+    }
+}
