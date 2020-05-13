@@ -1,5 +1,6 @@
 const http = require("http");
 const usuarioController = require("../controllers/usuarioController");
+const faculdadeController = require("../controllers/faculdadeController");
 const settings = require("../settings");
 const httpMsgs = require("./httpMsgs");
 const validate = require("../util/validate");
@@ -14,6 +15,9 @@ http
         } else if (req.url === "/usuarios") {
           // ROTA '/usuarios'
           usuarioController.getAllUsers(req, resp); // Retorna todos os usuarios
+        }else if(req.url ==="/faculdades"){
+          // ROTA '/faculdades'
+          faculdadeController.getAllFaculdades(req ,resp)
         } else {
           // ROTA '/usuario/:id'
           const userID = validate.Id(req.url); //Verifica se o '/usuario/:id' foi enviado

@@ -32,6 +32,7 @@ exports.showHome = function(req, resp){
             "userG": 1
         }},
         {url: "/usuario:userID", method: "DELETE" ,description: "Delete user data from table TB_USER"},
+        {url: "/faculdades", method: "GET" ,description: "Get all data from table TB_FACULDADE"},
 
     ]))
     resp.end();
