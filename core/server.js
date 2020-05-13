@@ -18,6 +18,12 @@ http
         }else if(req.url ==="/faculdades"){
           // ROTA '/faculdades'
           faculdadeController.getAllFaculdades(req ,resp)
+        }else if(req.url === '/cursos'){
+          //ROTA '/cursos'
+          faculdadeController.getAllCursos(req, resp)
+        }else if(req.url === '/materias'){
+          //ROTA '/materias'
+          faculdadeController.getAllMaterias(req, resp)
         } else {
           // ROTA '/usuario/:id'
           const userID = validate.Id(req.url); //Verifica se o '/usuario/:id' foi enviado
@@ -41,6 +47,19 @@ http
           });
           req.on("end", function () {
             usuarioController.addUser(req, resp, reqBody);
+          });
+          }else if(req.url ==='/facdata'){
+          // ROTA '/facdata'
+          var reqBody = "";
+          req.on("data", function (data) {
+            reqBody += data;
+            if (reqBody.length > 1e7) {//10mb
+              httpMsgs.show413(req, resp);
+            }
+          });
+          console.log("recived body", reqBody)
+          req.on("end", function () {
+            faculdadeController.postFaculdadeData(req, resp, reqBody);
           });
         } else {
           httpMsgs.showPostError(req, resp);

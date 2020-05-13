@@ -33,6 +33,17 @@ exports.showHome = function(req, resp){
         }},
         {url: "/usuario:userID", method: "DELETE" ,description: "Delete user data from table TB_USER"},
         {url: "/faculdades", method: "GET" ,description: "Get all data from table TB_FACULDADE"},
+        {url: "/cursos", method: "GET" ,description: "Get all data from table TB_CURSO"},
+        {url: "/materias", method: "GET" ,description: "Get all data from table TB_MATERIA"},
+        {url: "/facdata", method: "POST" ,description: "Insert user data in tables TB_USER_FAC, TB_USER_CUR and TB_USER_MAT", body:{
+            "userID": 1,
+            "facID": 1,
+            "curID": 1,
+            "matID1": 1,
+            "matID2": 2
+        }},
+
+
 
     ]))
     resp.end();
