@@ -1,8 +1,11 @@
 exports.dbConfig = {
-    user: "AtenaAdm",
-    password: "Murilo1234",
-    server: "ccstecno.ddns.net",
-    database: "Atena",
+    user: "atenaadmin",
+    password: "mogueno1234!@#$",
+    server: "atenaserver.database.windows.net",
+    database: "atenadatabase",
+    options:{
+        encrypt:"true"
+    },
     port: 1433 // default port for sql server
 }
 

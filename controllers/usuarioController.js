@@ -17,27 +17,32 @@ exports.addUser = function (req, resp, reqBody) {
     if (!reqBody) throw new Error("Input not valid");
     var data = JSON.parse(reqBody);
     if (data) {
-      var sqlQuery =
-        "INSERT INTO TB_USER (USER_STR_NOME, USER_INT_IDADE, USER_STR_SEXO, USER_STR_EMAIL, USER_STR_SENHA, USER_STR_FACEBOOKLOGIN, USER_STR_GOOGLELOGIN) OUTPUT INSERTED.USER_INT_ID VALUES";
-      sqlQuery += util.format(
-        " ('%s', %d, '%s', '%s', '%s', %d, %d)",
-        data.userName,
-        data.userIdade,
-        data.userSexo,
-        data.userEmail,
-        data.userSenha,
-        data.userF,
-        data.userG
-      );
-      db.executeSql(sqlQuery, function (data, err) {
-        if (err) {
-          httpMsgs.show500(req, resp, err);
-        } else {
-          httpMsgs.sendJson(req, resp, data);
-        }
-      });
-    } else {
-      throw new Error("Input not valid");
+      //Busca se o data.userEmail ja existe na tabela
+      var hasRegister = getUserByEmail(data.userEmail);
+
+      if (!hasRegister) {
+        var sqlQuery =
+          "INSERT INTO TB_USER (USER_STR_NOME, USER_INT_IDADE, USER_STR_SEXO, USER_STR_EMAIL, USER_STR_SENHA, USER_STR_FACEBOOKLOGIN, USER_STR_GOOGLELOGIN) OUTPUT INSERTED.USER_INT_ID VALUES";
+        sqlQuery += util.format(
+          " ('%s', %d, '%s', '%s', '%s', %d, %d)",
+          data.userName,
+          data.userIdade,
+          data.userSexo,
+          data.userEmail,
+          data.userSenha,
+          data.userF,
+          data.userG
+        );
+        db.executeSql(sqlQuery, function (data, err) {
+          if (err) {
+            httpMsgs.show500(req, resp, err);
+          } else {
+            httpMsgs.sendJson(req, resp, data);
+          }
+        });
+      } else {
+        throw new Error("User already exists");
+      }
     }
   } catch (err) {
     httpMsgs.show500(req, resp, err);
@@ -55,6 +60,21 @@ exports.getUser = function (req, resp, userID) {
       httpMsgs.sendJson(req, resp, data);
     }
   });
+};
+
+getUserByEmail = function (userEmail) {
+  db.executeSql(
+    "SELECT * FROM TB_USER WHERE USER_STR_EMAIL=" + userEmail,
+    function (data, err) {
+      if (err) {
+        return true;
+      } else if (data.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  );
 };
 
 exports.updateUser = function (req, resp, reqBody, userID) {
@@ -103,10 +123,10 @@ exports.updateUser = function (req, resp, reqBody, userID) {
 
       //Adiciona WHERE ao patch
       sqlQuery += " WHERE USER_INT_ID = " + userID;
-      console.log("sql query", sqlQuery)
+      console.log("sql query", sqlQuery);
       db.executeSql(sqlQuery, function (data, err) {
         if (err) {
-          console.log("caiu aqui")
+          console.log("caiu aqui");
           httpMsgs.show500(req, resp, err);
         } else {
           httpMsgs.send200(req, resp);
@@ -116,7 +136,7 @@ exports.updateUser = function (req, resp, reqBody, userID) {
       throw new Error("Input not valid");
     }
   } catch (err) {
-    console.log("caiu")
+    console.log("caiu");
     httpMsgs.show500(req, resp, err);
   }
 };
