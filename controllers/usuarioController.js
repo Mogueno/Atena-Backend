@@ -26,9 +26,9 @@ exports.addUser = function (req, resp, reqBody) {
           } else if (data.length > 0) {
             //Encontrou um usuario ja existente
             resp.writeHead( 200, { "Content-Type": "application/json" });
-            resp.write(JSON.stringify({"data": data, "newUser": false}));
+            resp.write(JSON.stringify({"USER_INT_ID": data[0].USER_INT_ID, "newUser": false}));
             resp.end();
-                  } else {
+            } else {
             //Nao encontrou usuario existente, e cria um novo.
             var sqlQuery =
               "INSERT INTO TB_USER (USER_STR_NOME, USER_INT_IDADE, USER_STR_SEXO, USER_STR_EMAIL, USER_STR_SENHA, USER_STR_FACEBOOKLOGIN, USER_STR_GOOGLELOGIN) OUTPUT INSERTED.USER_INT_ID VALUES";
@@ -47,7 +47,7 @@ exports.addUser = function (req, resp, reqBody) {
                 httpMsgs.show500(req, resp, err);
               } else {
                 resp.writeHead( 200, { "Content-Type": "application/json" });
-                resp.write(JSON.stringify({"data": data, "newUser": true}));
+                resp.write(JSON.stringify({"USER_INT_ID": data[0].USER_INT_ID, "newUser": true}));
                 resp.end();              }
             });
           }
