@@ -19,13 +19,13 @@ exports.addUser = function (req, resp, reqBody) {
     if (datareq && datareq.userEmail) {
       //Busca se o data.userEmail ja existe na tabela TB_USER
       db.executeSql(
-        "SELECT * FROM TB_USER WHERE USER_STR_EMAIL='" + datareq.userEmail + "'",
+        "SELECT USER_INT_ID FROM TB_USER WHERE USER_STR_EMAIL='" + datareq.userEmail + "'",
         function (data, err) {
           if (err) {
             throw new Error("Failed to verify if user already exists");
           } else if (data.length > 0) {
             //Encontrou um usuario ja existente
-            httpMsgs.sendJson(req, resp, {foundUser:true})
+            httpMsgs.sendJson(req, resp, data)
           } else {
             //Nao encontrou usuario existente, e cria um novo.
             var sqlQuery =
