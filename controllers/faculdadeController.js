@@ -68,9 +68,9 @@ exports.postFaculdadeData = function(req, resp, reqBody){
 
       db.executeSql(sqlQuery, function (data, err) {
         if (err) {
-          httpMsgs.show500(req, resp, err);
+          httpMsgs.sendJson(req, resp, {insertCompleted: false, err:err});
         } else {
-          httpMsgs.sendJson(req, resp, data);
+          httpMsgs.sendJson(req, resp, {insertCompleted: true});
         }
       });
     } else {
