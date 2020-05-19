@@ -25,8 +25,10 @@ exports.addUser = function (req, resp, reqBody) {
             throw new Error("Failed to verify if user already exists");
           } else if (data.length > 0) {
             //Encontrou um usuario ja existente
-            httpMsgs.sendJson(req, resp, data)
-          } else {
+            resp.writeHead( 200, { "Content-Type": "application/json" });
+            resp.write(JSON.stringify({"data": data, "newUser": false}));
+            resp.end();
+                  } else {
             //Nao encontrou usuario existente, e cria um novo.
             var sqlQuery =
               "INSERT INTO TB_USER (USER_STR_NOME, USER_INT_IDADE, USER_STR_SEXO, USER_STR_EMAIL, USER_STR_SENHA, USER_STR_FACEBOOKLOGIN, USER_STR_GOOGLELOGIN) OUTPUT INSERTED.USER_INT_ID VALUES";
@@ -44,8 +46,9 @@ exports.addUser = function (req, resp, reqBody) {
               if (err) {
                 httpMsgs.show500(req, resp, err);
               } else {
-                httpMsgs.sendJson(req, resp, data);
-              }
+                resp.writeHead( 200, { "Content-Type": "application/json" });
+                resp.write(JSON.stringify({"data": data, "newUser": true}));
+                resp.end();              }
             });
           }
         }
