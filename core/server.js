@@ -24,7 +24,10 @@ http
         }else if(req.url === '/materias'){
           //ROTA '/materias'
           faculdadeController.getAllMaterias(req, resp)
-        } else {
+        }else if(req.url.indexOf('/login/') != -1 ){
+            //ROTA '/login'
+            usuarioController.loginUser(req, resp)
+          }else {
           // ROTA '/usuario/:id'
           const userID = validate.Id(req.url); //Verifica se o '/usuario/:id' foi enviado
           if (userID) {

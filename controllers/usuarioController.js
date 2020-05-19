@@ -162,3 +162,17 @@ exports.deleteUser = function (req, resp, userID) {
     httpMsgs.show500(req, resp, err);
   }
 };
+
+exports.loginUser = function(req, resp){
+  var firstSplit = req.url.split('login/')[1]
+  var userEmail = firstSplit.split("-")[0]
+  var userSenha = firstSplit.split("-")[1]
+
+  db.executeSql("SELECT * FROM TB_USER WHERE USER_STR_EMAIL = '"+ userEmail + "' AND USER_STR_SENHA = '" + userSenha + "';", function (data, err) {
+    if (err) {
+      httpMsgs.show500(req, resp, err);
+    } else {
+      httpMsgs.sendJson(req, resp, data);
+    }
+  });
+}
