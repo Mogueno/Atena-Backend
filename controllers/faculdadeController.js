@@ -41,7 +41,6 @@ exports.getAllMaterias = function (req, resp) {
 };
 
 exports.postFaculdadeData = function(req, resp, reqBody){
-  console.log("reqBody do controller", reqBody)
   try {
     if (!reqBody) throw new Error("Body missing");
 

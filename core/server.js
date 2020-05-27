@@ -1,6 +1,7 @@
 const http = require("http");
 const usuarioController = require("../controllers/usuarioController");
 const faculdadeController = require("../controllers/faculdadeController");
+const notasController = require("../controllers/notasController");
 const settings = require("../settings");
 const httpMsgs = require("./httpMsgs");
 const validate = require("../util/validate");
@@ -24,12 +25,23 @@ http
         }else if(req.url === '/materias'){
           //ROTA '/materias'
           faculdadeController.getAllMaterias(req, resp)
+        }else if(req.url.indexOf('/notas/') != -1) {
+          //ROTA '/notas/:userID'
+          const userID = validate.IdNota(req.url);
+          if (userID) {
+            notasController.getAllNotas(req, resp, userID); // Busca o usuario do id solicitado
+          } else {
+            httpMsgs.show404(req, resp);
+          }
         }else if(req.url.indexOf('/login/') != -1 ){
             //ROTA '/login'
             usuarioController.loginUser(req, resp)
-          }else {
+        }else if(req.url.indexOf('/singlenota/') != -1){
+            //ROTA '/singlenota/:userID-:notaID'
+            notasController.getSingleNota(req, resp)
+        }else{
           // ROTA '/usuario/:id'
-          const userID = validate.Id(req.url); //Verifica se o '/usuario/:id' foi enviado
+          const userID = validate.IdUser(req.url); //Verifica se o '/usuario/:id' foi enviado
           if (userID) {
             usuarioController.getUser(req, resp, userID); // Busca o usuario do id solicitado
           } else {
@@ -51,20 +63,31 @@ http
           req.on("end", function () {
             usuarioController.addUser(req, resp, reqBody);
           });
-          }else if(req.url ==='/facdata'){
-          // ROTA '/facdata'
-          var reqBody = "";
-          req.on("data", function (data) {
-            reqBody += data;
-            if (reqBody.length > 1e7) {//10mb
-              httpMsgs.show413(req, resp);
-            }
-          });
-          console.log("recived body", reqBody)
-          req.on("end", function () {
-            faculdadeController.postFaculdadeData(req, resp, reqBody);
-          });
-        } else {
+        }else if(req.url ==='/facdata'){
+        // ROTA '/facdata'
+        var reqBody = "";
+        req.on("data", function (data) {
+          reqBody += data;
+          if (reqBody.length > 1e7) {//10mb
+            httpMsgs.show413(req, resp);
+          }
+        });
+        req.on("end", function () {
+          faculdadeController.postFaculdadeData(req, resp, reqBody);
+        });
+        }else if(req.url ==='/notadata'){
+        // ROTA '/facdata'
+        var reqBody = "";
+        req.on("data", function (data) {
+          reqBody += data;
+          if (reqBody.length > 1e7) {//10mb
+            httpMsgs.show413(req, resp);
+          }
+        });
+        req.on("end", function () {
+          notasController.addNota(req, resp, reqBody);
+        });
+        }else {
           httpMsgs.showPostError(req, resp);
         }
         break;
@@ -72,8 +95,10 @@ http
       case "DELETE":
         if (req.url === "/") {
           httpMsgs.show404(req, resp);
+        }else if(req.url.indexOf('/notadelete/') != -1){
+          notasController.deleteNota(req, resp)
         } else {
-          const userID = validate.Id(req.url);
+          const userID = validate.IdUser(req.url);
           if (userID) {
             usuarioController.deleteUser(req, resp, userID);
           } else {
@@ -85,8 +110,19 @@ http
       case "PATCH":
         if (req.url === "/") {
           httpMsgs.show404(req, resp);
+        }else if(req.url.indexOf("/notapatch/") != -1){
+          var reqBody = "";
+          req.on("data", function (data) {
+            reqBody += data;
+            if (reqBody.length > 1e7) {//10mb
+              httpMsgs.show413(req, resp);
+            }
+          });
+          req.on("end", function () {
+            notasController.updateNota(req, resp, reqBody)
+          });
         } else {
-          const userID = validate.Id(req.url);
+          const userID = validate.IdUser(req.url);
           if (userID) {
             var reqBody = "";
             req.on("data", function (data) {

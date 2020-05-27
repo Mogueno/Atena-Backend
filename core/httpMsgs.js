@@ -42,6 +42,15 @@ exports.showHome = function(req, resp){
             "matID1": 1,
             "matID2": 2
         }},
+        {url: "/nota/:userID", method: "GET" ,description: "Get all user data from table TB_NOTA_STR"},
+        {url: "/notadata", method: "POST" ,description: "Insert user data in tables TB_NOTA_STR and TB_NOTA", body:{
+            "userID": 1,
+            "facID": 1,
+            "curID": 1,
+            "matID": 1,
+            "titulo": "Title",
+            "conteudo": "Content"
+        }},
 
 
 
