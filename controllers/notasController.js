@@ -12,8 +12,20 @@ exports.getAllNotas = function (req, resp, userID) {
       if (err) {
         httpMsgs.show500(req, resp, err);
       } else {
-        httpMsgs.sendJson(req, resp, data);
-      }
+        var reqSendData = [];
+        data.forEach((element ) => {
+          reqSendData.push({
+            notaID: element.NOTA_INT_ID,
+            titulo: element.STR_STR_TITLE,
+            conteudo: element.STR_STR_PATH,
+            matID: element.MAT_INT_ID
+          })
+          // reqSendData[index].titulo = element.STR_STR_TITLE
+        });
+        resp.writeHead(200, { "Content-Type": "application/json" });
+        resp.write(JSON.stringify({ reqSendData }));
+        resp.end();
+}
     }
   );
 };
@@ -84,22 +96,32 @@ exports.getSingleNota = function (req, resp) {
 
   if (notaID && userID) {
     db.executeSql(
-      "SELECT STR_STR_TITLE, STR_STR_PATH FROM TB_NOTA_STR JOIN TB_NOTA ON TB_NOTA_STR.STR_INT_ID = TB_NOTA.STR_INT_ID\
+      "SELECT STR_STR_TITLE, STR_STR_PATH, MAT_INT_ID FROM TB_NOTA_STR JOIN TB_NOTA ON TB_NOTA_STR.STR_INT_ID = TB_NOTA.STR_INT_ID\
         WHERE USER_INT_ID = " +
         userID +
-        " AND TB_NOTA_STR.STR_INT_ID = " +
+        " AND TB_NOTA.NOTA_INT_ID = " +
         notaID,
       function (data, err) {
         if (err) {
           httpMsgs.show500(req, resp, err);
         } else {
           resp.writeHead(200, { "Content-Type": "application/json" });
-          resp.write(
-            JSON.stringify({
-              titulo: data[0].STR_STR_TITLE,
-              conteudo: data[0].STR_STR_PATH,
-            })
-          );
+          if(data.length){
+            resp.write(
+              JSON.stringify({ 
+                titulo: data[0].STR_STR_TITLE,
+                conteudo: data[0].STR_STR_PATH,
+                matID: data[0].MAT_INT_ID
+              })
+            );
+          }else{
+            resp.write(
+              JSON.stringify({ 
+                data: false 
+              })
+            );
+          }
+          
           resp.end();
         }
       }
