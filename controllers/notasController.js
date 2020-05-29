@@ -169,10 +169,14 @@ exports.updateNota = function (req, resp, reqBody) {
       
       db.executeSql(sqlQuery, function (data, err) {
         if (err) {
-          httpMsgs.show500(req, resp, err);
-        } else {
-          httpMsgs.send200(req, resp);
-        }
+          resp.writeHead(200, { "Content-Type": "application/json" });
+          resp.write(JSON.stringify({ patched: false, err:err }));
+          resp.end();
+} else {
+          resp.writeHead(200, { "Content-Type": "application/json" });
+          resp.write(JSON.stringify({ patched: true }));
+          resp.end();
+}
       });
     } else {
       throw new Error("Input not valid");
