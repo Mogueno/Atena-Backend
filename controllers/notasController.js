@@ -172,7 +172,7 @@ exports.updateNota = function (req, resp, reqBody) {
           resp.writeHead(200, { "Content-Type": "application/json" });
           resp.write(JSON.stringify({ patched: false, err:err }));
           resp.end();
-} else {
+          } else {
           resp.writeHead(200, { "Content-Type": "application/json" });
           resp.write(JSON.stringify({ patched: true }));
           resp.end();
