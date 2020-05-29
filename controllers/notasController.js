@@ -199,9 +199,13 @@ exports.deleteNota = function (req, resp) {
         sqlQuery += " WHERE STR_INT_ID = " + data[0].STR_INT_ID;
         db.executeSql(sqlQuery, function (data, err) {
           if (err) {
-            httpMsgs.show500(req, resp, err);
+            resp.writeHead(200, { "Content-Type": "application/json" });
+            resp.write(JSON.stringify({ deleted: true }));
+            resp.end();
           } else {
-            httpMsgs.send200(req, resp);
+            resp.writeHead(200, { "Content-Type": "application/json" });
+            resp.write(JSON.stringify({ deleted: true }));
+            resp.end();
           }
         });
       }
