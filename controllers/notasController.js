@@ -13,19 +13,19 @@ exports.getAllNotas = function (req, resp, userID) {
         httpMsgs.show500(req, resp, err);
       } else {
         var reqSendData = [];
-        data.forEach((element ) => {
+        data.forEach((element) => {
           reqSendData.push({
             notaID: element.NOTA_INT_ID,
             titulo: element.STR_STR_TITLE,
             conteudo: element.STR_STR_PATH,
-            matID: element.MAT_INT_ID
-          })
+            matID: element.MAT_INT_ID,
+          });
           // reqSendData[index].titulo = element.STR_STR_TITLE
         });
         resp.writeHead(200, { "Content-Type": "application/json" });
         resp.write(JSON.stringify({ reqSendData }));
         resp.end();
-}
+      }
     }
   );
 };
@@ -106,22 +106,22 @@ exports.getSingleNota = function (req, resp) {
           httpMsgs.show500(req, resp, err);
         } else {
           resp.writeHead(200, { "Content-Type": "application/json" });
-          if(data.length){
+          if (data.length) {
             resp.write(
-              JSON.stringify({ 
+              JSON.stringify({
                 titulo: data[0].STR_STR_TITLE,
                 conteudo: data[0].STR_STR_PATH,
-                matID: data[0].MAT_INT_ID
+                matID: data[0].MAT_INT_ID,
               })
             );
-          }else{
+          } else {
             resp.write(
-              JSON.stringify({ 
-                data: false 
+              JSON.stringify({
+                data: false,
               })
             );
           }
-          
+
           resp.end();
         }
       }
@@ -140,8 +140,7 @@ exports.updateNota = function (req, resp, reqBody) {
    * titulo:"titulo",
    * conteudo:"conteudo"
    */
-    try {
-
+  try {
     if (!reqBody) throw new Error("Body not provided");
 
     var data = JSON.parse(reqBody);
@@ -166,17 +165,17 @@ exports.updateNota = function (req, resp, reqBody) {
       sqlQuery = sqlQuery.slice(0, -1);
       //Adiciona WHERE ao patch
       sqlQuery += " WHERE STR_INT_ID = " + data.notaID;
-      
+
       db.executeSql(sqlQuery, function (data, err) {
         if (err) {
           resp.writeHead(200, { "Content-Type": "application/json" });
-          resp.write(JSON.stringify({ patched: false, err:err }));
+          resp.write(JSON.stringify({ patched: false, err: err }));
           resp.end();
-          } else {
+        } else {
           resp.writeHead(200, { "Content-Type": "application/json" });
           resp.write(JSON.stringify({ patched: true }));
           resp.end();
-}
+        }
       });
     } else {
       throw new Error("Input not valid");
@@ -187,22 +186,27 @@ exports.updateNota = function (req, resp, reqBody) {
 };
 
 exports.deleteNota = function (req, resp) {
+  var notaID = req.url.split("notadelete/")[1];
 
-    var notaID = req.url.split("notadelete/")[1];
- 
   try {
-      //Verificar se tem mais de uma nota restante
-    var sqlQuery = "DELETE FROM TB_NOTA ";
-    sqlQuery += " WHERE STR_INT_ID = " + notaID;
-    sqlQuery += " ;DELETE FROM TB_NOTA_STR ";
-    sqlQuery += " WHERE STR_INT_ID = " + notaID;
-    db.executeSql(sqlQuery, function (data, err) {
-      if (err) {
-        httpMsgs.show500(req, resp, err);
-      } else {
-        httpMsgs.send200(req, resp);
+    db.executeSql(
+      "SELECT STR_INT_ID FROM TB_NOTA WHERE NOTA_INT_ID = " + notaID,
+      function (data, err) {
+        console.log("data", data[0].STR_INT_ID);
+        var sqlQuery = "DELETE FROM TB_NOTA ";
+        sqlQuery += " WHERE STR_INT_ID = " + data[0].STR_INT_ID;
+        sqlQuery += " ;DELETE FROM TB_NOTA_STR ";
+        sqlQuery += " WHERE STR_INT_ID = " + data[0].STR_INT_ID;
+        db.executeSql(sqlQuery, function (data, err) {
+          if (err) {
+            httpMsgs.show500(req, resp, err);
+          } else {
+            httpMsgs.send200(req, resp);
+          }
+        });
       }
-    });
+    );
+    //Verificar se tem mais de uma nota restante
   } catch (err) {
     httpMsgs.show500(req, resp, err);
   }
