@@ -144,42 +144,47 @@ exports.updateNota = function (req, resp, reqBody) {
     if (!reqBody) throw new Error("Body not provided");
 
     var data = JSON.parse(reqBody);
-    if (data && data.userID && data.notaID) {
-      var sqlQuery = "UPDATE TB_NOTA_STR SET ";
-      var isDataProvided = false;
-      //STRING FIELDS
-      if (data.titulo) {
-        sqlQuery += " STR_STR_TITLE = '" + data.titulo + "',";
-        isDataProvided = true;
-      }
-      if (data.conteudo) {
-        sqlQuery += " STR_STR_PATH = '" + data.conteudo + "',";
-        isDataProvided = true;
-      }
-      if (data.userID) {
-        sqlQuery += " STR_INT_EDITED = '" + data.userID + "',";
-        isDataProvided = true;
-      }
-      //END STRING FIELDS
-      //Remove a ultima virgula da query sqlQuery
-      sqlQuery = sqlQuery.slice(0, -1);
-      //Adiciona WHERE ao patch
-      sqlQuery += " WHERE STR_INT_ID = " + data.notaID;
+    db.executeSql(
+      "SELECT STR_INT_ID FROM TB_NOTA WHERE NOTA_INT_ID = " + notaID,
+      function (datanota, err) {
+        if (data && data.userID && datanota[0].STR_INT_ID) {
+          var sqlQuery = "UPDATE TB_NOTA_STR SET ";
+          var isDataProvided = false;
+          //STRING FIELDS
+          if (data.titulo) {
+            sqlQuery += " STR_STR_TITLE = '" + data.titulo + "',";
+            isDataProvided = true;
+          }
+          if (data.conteudo) {
+            sqlQuery += " STR_STR_PATH = '" + data.conteudo + "',";
+            isDataProvided = true;
+          }
+          if (data.userID) {
+            sqlQuery += " STR_INT_EDITED = '" + data.userID + "',";
+            isDataProvided = true;
+          }
+          //END STRING FIELDS
+          //Remove a ultima virgula da query sqlQuery
+          sqlQuery = sqlQuery.slice(0, -1);
+          //Adiciona WHERE ao patch
+          sqlQuery += " WHERE STR_INT_ID = " + datanota[0].STR_INT_ID;
 
-      db.executeSql(sqlQuery, function (data, err) {
-        if (err) {
-          resp.writeHead(200, { "Content-Type": "application/json" });
-          resp.write(JSON.stringify({ patched: false, err: err }));
-          resp.end();
+          db.executeSql(sqlQuery, function (data, err) {
+            if (err) {
+              resp.writeHead(200, { "Content-Type": "application/json" });
+              resp.write(JSON.stringify({ patched: false, err: err }));
+              resp.end();
+            } else {
+              resp.writeHead(200, { "Content-Type": "application/json" });
+              resp.write(JSON.stringify({ patched: true }));
+              resp.end();
+            }
+          });
         } else {
-          resp.writeHead(200, { "Content-Type": "application/json" });
-          resp.write(JSON.stringify({ patched: true }));
-          resp.end();
+          throw new Error("Input not valid");
         }
-      });
-    } else {
-      throw new Error("Input not valid");
-    }
+      }
+    );
   } catch (err) {
     httpMsgs.show500(req, resp, err);
   }
