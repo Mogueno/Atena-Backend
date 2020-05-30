@@ -145,7 +145,7 @@ exports.updateNota = function (req, resp, reqBody) {
 
     var data = JSON.parse(reqBody);
     db.executeSql(
-      "SELECT STR_INT_ID FROM TB_NOTA WHERE NOTA_INT_ID = " + notaID,
+      "SELECT STR_INT_ID FROM TB_NOTA WHERE NOTA_INT_ID = " + data.notaID,
       function (datanota, err) {
         if (data && data.userID && datanota[0].STR_INT_ID) {
           var sqlQuery = "UPDATE TB_NOTA_STR SET ";
