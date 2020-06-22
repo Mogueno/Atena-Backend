@@ -59,15 +59,15 @@ exports.postFaculdadeData = function(req, resp, reqBody){
         var matData1 = data.userID + "," + data.matID1 ;  
         var matData2 = data.userID  + "," + data.matID2; 
         var sqlQuery =
-        "INSERT INTO TB_USER_FAC (USER_INT_ID, FAC_INT_ID) VALUES ( " + facData  + 
-        " ); INSERT INTO TB_USER_CUR (USER_INT_ID, CUR_INT_ID) VALUES (" + curData  +
-         "); INSERT INTO TB_USER_MAT (USER_INT_ID, MAT_INT_ID ) VALUES (" +  matData1 +
-          "),(" + matData2 +
-           ")";
+         "INSERT INTO TB_USER_FAC (USER_INT_ID, FAC_INT_ID) VALUES ( " + facData  + 
+         "); INSERT INTO TB_USER_CUR (USER_INT_ID, CUR_INT_ID) VALUES (" + curData  +
+         "); INSERT INTO TB_USER_MAT (USER_INT_ID, MAT_INT_ID ) VALUES (" +  matData1 + 
+         "); INSERT INTO TB_USER_MAT (USER_INT_ID, MAT_INT_ID ) VALUES (" + matData2 +
+         ")";
 
       db.executeSql(sqlQuery, function (data, err) {
         if (err) {
-          httpMsgs.sendJson(req, resp, {insertCompleted: false, err:err});
+          httpMsgs.sendJson(req, resp, {insertCompleted: false});
         } else {
           httpMsgs.sendJson(req, resp, {insertCompleted: true});
         }
